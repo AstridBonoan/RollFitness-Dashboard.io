@@ -38,19 +38,21 @@ In the [RollnFitness](https://github.com/AstridBonoan/RollnFitness) repo SQL Edi
 3. `supabase/subscriptions.sql`
 4. `supabase/sports_plan.sql`
 5. `supabase/admin_analytics.sql`
-6. **`supabase/admin_rpc.sql`** (in this repo — dashboard aggregates + first-admin bootstrap)
+6. **`supabase/admin_rpc.sql`** (in this repo — dashboard aggregates)
+7. **`supabase/seed_admin.sql`** — grant admin access to an existing member (edit email as needed)
 
-### First admin account
+### Grant admin access
 
-**Option A — Sign up in the app (easiest):** When no row exists in `admin_users`, the login page shows a **Create admin** tab. Submit the form to create your Supabase Auth user, profile, and first admin row automatically.
-
-**Option B — Manual SQL** (if an admin already exists, or you prefer SQL):
+Run in Supabase SQL Editor (or use `supabase/seed_admin.sql`):
 
 ```sql
-insert into public.admin_users (user_id) values ('<your-auth-user-uuid>');
+insert into public.admin_users (user_id)
+select id from public.profiles
+where lower(email) = lower('your@email.com')
+on conflict (user_id) do nothing;
 ```
 
-After the first admin exists, public signup is disabled. Additional admins must be added via SQL by an existing admin.
+Sign in with the same email/password as the member app. Non-admins are signed out with **Access denied**.
 
 ## Scripts
 
