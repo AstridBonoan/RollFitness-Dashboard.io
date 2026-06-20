@@ -126,21 +126,21 @@ export function LoginPage() {
           )}
         </p>
 
-        <div className="mt-6 flex rounded-xl border border-carbon-200 p-1 dark:border-white/10" role="tablist">
-          <button
-            type="button"
-            role="tab"
-            aria-selected={mode === 'signin'}
-            onClick={() => switchMode('signin')}
-            className={`touch-target flex-1 rounded-lg px-3 py-2 text-sm font-medium transition ${
-              mode === 'signin'
-                ? 'bg-brand-700 text-white'
-                : 'text-carbon-700 hover:bg-carbon-100 dark:text-steel-300 dark:hover:bg-white/5'
-            }`}
-          >
-            Sign in
-          </button>
-          {bootstrapAvailable ? (
+        {bootstrapAvailable ? (
+          <div className="mt-6 flex rounded-xl border border-carbon-200 bg-carbon-50 p-1 dark:border-white/10 dark:bg-white/5" role="tablist" aria-label="Authentication mode">
+            <button
+              type="button"
+              role="tab"
+              aria-selected={mode === 'signin'}
+              onClick={() => switchMode('signin')}
+              className={`touch-target flex-1 rounded-lg px-3 py-2 text-sm font-medium transition ${
+                mode === 'signin'
+                  ? 'bg-white text-brand-800 shadow-sm dark:bg-carbon-900 dark:text-brand-300'
+                  : 'text-carbon-600 hover:text-carbon-900 dark:text-steel-400 dark:hover:text-steel-200'
+              }`}
+            >
+              Sign in
+            </button>
             <button
               type="button"
               role="tab"
@@ -148,17 +148,17 @@ export function LoginPage() {
               onClick={() => switchMode('signup')}
               className={`touch-target flex-1 rounded-lg px-3 py-2 text-sm font-medium transition ${
                 mode === 'signup'
-                  ? 'bg-brand-700 text-white'
-                  : 'text-carbon-700 hover:bg-carbon-100 dark:text-steel-300 dark:hover:bg-white/5'
+                  ? 'bg-white text-brand-800 shadow-sm dark:bg-carbon-900 dark:text-brand-300'
+                  : 'text-carbon-600 hover:text-carbon-900 dark:text-steel-400 dark:hover:text-steel-200'
               }`}
             >
               Create admin
             </button>
-          ) : null}
-        </div>
+          </div>
+        ) : null}
 
         {mode === 'signin' ? (
-          <form onSubmit={handleSignIn} className="mt-6 space-y-4">
+          <form onSubmit={handleSignIn} className={`space-y-4 ${bootstrapAvailable ? 'mt-6' : 'mt-8'}`}>
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-carbon-700 dark:text-steel-300">
                 Email
