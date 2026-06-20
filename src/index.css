@@ -1,0 +1,187 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --brand-50: 240 244 248;
+  --brand-100: 220 230 240;
+  --brand-200: 184 201 222;
+  --brand-300: 138 163 196;
+  --brand-400: 92 125 169;
+  --brand-500: 61 95 138;
+  --brand-600: 45 74 111;
+  --brand-700: 30 58 95;
+  --brand-800: 21 45 74;
+  --brand-900: 15 32 53;
+  --brand-950: 10 21 40;
+
+  --accent-50: 247 255 224;
+  --accent-100: 237 255 194;
+  --accent-200: 217 255 133;
+  --accent-300: 196 255 71;
+  --accent-400: 184 255 0;
+  --accent-500: 154 230 0;
+  --accent-600: 122 204 0;
+  --accent-700: 92 153 0;
+  --accent-800: 69 115 0;
+  --accent-900: 51 86 0;
+  --accent-950: 34 56 0;
+
+  --vitality-50: 240 255 232;
+  --vitality-100: 220 255 204;
+  --vitality-200: 184 255 153;
+  --vitality-300: 132 255 71;
+  --vitality-400: 87 255 20;
+  --vitality-500: 66 230 0;
+  --vitality-600: 51 184 0;
+  --vitality-700: 39 143 0;
+  --vitality-800: 31 112 0;
+  --vitality-900: 24 86 0;
+  --vitality-950: 15 61 0;
+
+  --circuit-50: 255 244 235;
+  --circuit-100: 255 228 204;
+  --circuit-200: 255 201 153;
+  --circuit-300: 255 173 102;
+  --circuit-400: 255 140 51;
+  --circuit-500: 255 107 0;
+  --circuit-600: 230 92 0;
+  --circuit-700: 191 76 0;
+  --circuit-800: 153 61 0;
+  --circuit-900: 115 46 0;
+  --circuit-950: 77 31 0;
+
+  --shadow-glow: 0 0 40px -10px rgba(30, 58, 95, 0.25);
+  --shadow-glow-octane: 0 0 24px -8px rgba(30, 58, 95, 0.2), 0 0 48px -16px rgba(21, 45, 74, 0.12);
+  --shadow-glow-vitality: 0 0 24px -8px rgba(87, 255, 20, 0.35);
+  --shadow-glow-circuit: 0 0 24px -8px rgba(255, 107, 0, 0.3);
+  --shadow-card: 0 4px 24px -8px rgba(15, 32, 53, 0.12);
+}
+
+.dark {
+  --brand-50: 238 243 255;
+  --brand-100: 220 232 254;
+  --brand-200: 185 207 249;
+  --brand-300: 138 175 243;
+  --brand-400: 90 138 235;
+  --brand-500: 65 105 225;
+  --brand-600: 43 82 184;
+  --brand-700: 35 66 150;
+  --brand-800: 29 54 128;
+  --brand-900: 23 43 102;
+  --brand-950: 15 26 64;
+
+  --accent-50: 255 251 235;
+  --accent-100: 254 243 199;
+  --accent-200: 253 230 138;
+  --accent-300: 252 211 77;
+  --accent-400: 250 204 21;
+  --accent-500: 234 179 8;
+  --accent-600: 202 138 4;
+  --accent-700: 161 98 7;
+  --accent-800: 133 77 14;
+  --accent-900: 113 63 18;
+  --accent-950: 66 32 6;
+
+  --vitality-50: 255 251 235;
+  --vitality-100: 254 243 199;
+  --vitality-200: 253 230 138;
+  --vitality-300: 252 211 77;
+  --vitality-400: 250 204 21;
+  --vitality-500: 234 179 8;
+  --vitality-600: 202 138 4;
+  --vitality-700: 161 98 7;
+  --vitality-800: 133 77 14;
+  --vitality-900: 113 63 18;
+  --vitality-950: 66 32 6;
+
+  --circuit-50: 255 251 235;
+  --circuit-100: 254 243 199;
+  --circuit-200: 253 230 138;
+  --circuit-300: 252 211 77;
+  --circuit-400: 251 191 36;
+  --circuit-500: 250 204 21;
+  --circuit-600: 234 179 8;
+  --circuit-700: 202 138 4;
+  --circuit-800: 161 98 7;
+  --circuit-900: 133 77 14;
+  --circuit-950: 113 63 18;
+
+  --shadow-glow: 0 0 40px -10px rgba(65, 105, 225, 0.35);
+  --shadow-glow-octane: 0 0 32px -8px rgba(65, 105, 225, 0.4), 0 0 64px -16px rgba(43, 82, 184, 0.2);
+  --shadow-glow-vitality: 0 0 28px -8px rgba(250, 204, 21, 0.4);
+  --shadow-glow-circuit: 0 0 28px -8px rgba(250, 204, 21, 0.45);
+  --shadow-card: 0 4px 28px -10px rgba(0, 0, 0, 0.55);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply font-sans antialiased text-carbon-900 bg-carbon-100 dark:text-steel-100 dark:bg-[#0a0a0a];
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-brand-700 dark:outline-brand-400;
+  }
+}
+
+@layer components {
+  .card-surface {
+    @apply rounded-2xl border border-carbon-200 bg-white shadow-sm dark:border-white/10 dark:bg-[#1a1a1a] dark:shadow-none;
+  }
+
+  .touch-target {
+    @apply min-h-[44px] min-w-[44px];
+  }
+
+  .dashboard-shell {
+    @apply min-h-screen bg-carbon-100 text-carbon-900 dark:bg-[#0a0a0a] dark:text-steel-100;
+    background-image:
+      radial-gradient(ellipse 70% 45% at 80% 10%, rgba(30, 58, 95, 0.04) 0%, transparent 55%),
+      radial-gradient(ellipse 60% 40% at 10% 80%, rgba(184, 255, 0, 0.05) 0%, transparent 50%),
+      linear-gradient(180deg, #ffffff 0%, #fafafa 100%);
+  }
+
+  .dark .dashboard-shell {
+    background-image:
+      radial-gradient(ellipse 70% 45% at 80% 10%, rgba(65, 105, 225, 0.1) 0%, transparent 55%),
+      radial-gradient(ellipse 60% 40% at 10% 80%, rgba(250, 204, 21, 0.06) 0%, transparent 50%),
+      linear-gradient(180deg, #111111 0%, #0a0a0a 100%);
+  }
+
+  .mobile-nav-overlay {
+    @apply fixed inset-0 z-[200] bg-brand-950/40 lg:hidden dark:bg-black/80;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+
+  .mobile-nav-overlay--open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .mobile-nav-drawer {
+    @apply fixed top-0 left-0 z-[210] flex h-[100dvh] w-[min(88vw,320px)] flex-col border-r border-carbon-200 bg-white shadow-2xl lg:hidden dark:border-white/10 dark:bg-[#111111];
+    transform: translateX(-100%);
+    transition: transform 0.32s cubic-bezier(0.32, 0.72, 0, 1);
+  }
+
+  .mobile-nav-drawer--open {
+    transform: translateX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .mobile-nav-drawer,
+  .mobile-nav-overlay {
+    transition: none;
+  }
+}
