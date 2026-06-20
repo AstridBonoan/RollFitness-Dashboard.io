@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import type { Session } from '@supabase/supabase-js'
 import { checkIsAdmin, getSupabase } from '@/services/supabase'
+import { tryBootstrapAdmin } from '@/services/auth'
 
 export type AdminGateState =
   | { status: 'loading' }
@@ -24,6 +25,12 @@ export function useAdminGate() {
 
     const isAdmin = await checkIsAdmin()
     if (!isAdmin) {
+      const bootstrapped = await tryBootstrapAdmin()
+      if (bootstrapped) {
+        setState({ status: 'authenticated', session })
+        return
+      }
+
       await supabase.auth.signOut()
       setState({ status: 'denied', session })
       return

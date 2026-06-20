@@ -522,3 +522,41 @@ end;
 $$;
 
 grant execute on function public.admin_subscription_status_counts() to authenticated;
+
+-- ---------------------------------------------------------------------------
+-- First-admin bootstrap (signup / sign-in when admin_users is empty)
+-- ---------------------------------------------------------------------------
+
+create or replace function public.can_bootstrap_admin()
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select not exists (select 1 from public.admin_users);
+$$;
+
+grant execute on function public.can_bootstrap_admin() to anon, authenticated;
+
+create or replace function public.register_as_first_admin()
+returns boolean
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if auth.uid() is null then
+    raise exception 'Not authenticated';
+  end if;
+
+  if exists (select 1 from public.admin_users) then
+    raise exception 'An admin account already exists';
+  end if;
+
+  insert into public.admin_users (user_id) values (auth.uid());
+  return true;
+end;
+$$;
+
+grant execute on function public.register_as_first_admin() to authenticated;
