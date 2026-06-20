@@ -25,7 +25,7 @@ export function ChartCard({
           {emptyMessage}
         </p>
       ) : (
-        <div className="h-64 w-full" role="img" aria-label={`${title} chart`}>
+        <div className="h-64 min-h-64 w-full min-w-0" role="img" aria-label={`${title} chart`}>
           {children}
         </div>
       )}

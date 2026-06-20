@@ -35,7 +35,7 @@ export function AnalyticsPage() {
         empty={workoutTrend.length === 0}
         emptyMessage="No workout sessions recorded yet."
       >
-        <ResponsiveContainer width="100%" height="100%">
+        <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={256}>
           <AreaChart data={workoutTrend}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="day" tick={{ fontSize: 11 }} />
@@ -51,7 +51,7 @@ export function AnalyticsPage() {
           {topWorkouts.length === 0 ? (
             <p className="text-sm text-carbon-500">No workout data yet.</p>
           ) : (
-            <ResponsiveContainer width="100%" height={280}>
+            <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={256}>
               <BarChart data={topWorkouts} layout="vertical" margin={{ left: 8 }}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis type="number" tick={{ fontSize: 11 }} />
