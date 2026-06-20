@@ -6,6 +6,8 @@ import type {
   SubscriptionPayment,
   TimeSeriesPoint,
 } from '@/types'
+import type { MembershipPlanId } from '@/lib/membership'
+import { daysAgoIso, isMissingRpcError } from '@/utils/rpc'
 
 async function attachProfiles<T extends { user_id: string }>(
   rows: T[],
@@ -52,14 +54,52 @@ export async function fetchPayments(page = 0, pageSize = 20): Promise<{
 
 export async function fetchRevenueOverTime(days = 30): Promise<TimeSeriesPoint[]> {
   const { data, error } = await getSupabase().rpc('admin_revenue_over_time', { days_back: days })
+  if (!error) return (data ?? []) as TimeSeriesPoint[]
+  if (isMissingRpcError(error)) return fetchRevenueOverTimeFallback(days)
+  throw error
+}
+
+async function fetchRevenueOverTimeFallback(days: number): Promise<TimeSeriesPoint[]> {
+  const { data, error } = await getSupabase()
+    .from('subscription_payments')
+    .select('paid_at, amount_cents, status')
+    .eq('status', 'paid')
+    .gte('paid_at', daysAgoIso(days))
   if (error) throw error
-  return (data ?? []) as TimeSeriesPoint[]
+
+  const buckets = new Map<string, number>()
+  for (const row of data ?? []) {
+    if (!row.paid_at) continue
+    const day = new Date(row.paid_at).toISOString().slice(0, 10)
+    buckets.set(day, (buckets.get(day) ?? 0) + row.amount_cents)
+  }
+
+  return [...buckets.entries()]
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([day, amount_cents]) => ({ day, amount_cents }))
 }
 
 export async function fetchRevenueByPlan(days = 30): Promise<RevenueByPlan[]> {
   const { data, error } = await getSupabase().rpc('admin_revenue_by_plan', { days_back: days })
+  if (!error) return (data ?? []) as RevenueByPlan[]
+  if (isMissingRpcError(error)) return fetchRevenueByPlanFallback(days)
+  throw error
+}
+
+async function fetchRevenueByPlanFallback(days: number): Promise<RevenueByPlan[]> {
+  const { data, error } = await getSupabase()
+    .from('subscription_payments')
+    .select('plan, amount_cents, paid_at, status')
+    .eq('status', 'paid')
+    .gte('paid_at', daysAgoIso(days))
   if (error) throw error
-  return (data ?? []) as RevenueByPlan[]
+
+  const totals = new Map<MembershipPlanId, number>()
+  for (const row of data ?? []) {
+    totals.set(row.plan as MembershipPlanId, (totals.get(row.plan as MembershipPlanId) ?? 0) + row.amount_cents)
+  }
+
+  return [...totals.entries()].map(([plan, amount_cents]) => ({ plan, amount_cents }))
 }
 
 export async function fetchExpenses(): Promise<Expense[]> {

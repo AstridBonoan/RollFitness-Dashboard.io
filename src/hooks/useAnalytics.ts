@@ -13,6 +13,7 @@ import type {
   TimeSeriesPoint,
   TopWorkout,
 } from '@/types'
+import { settle } from '@/utils/settle'
 
 const EMPTY_ACTIVE_USERS: ActiveUsersMetrics = { dau: 0, wau: 0, mau: 0 }
 
@@ -21,15 +22,6 @@ const EMPTY_RETENTION: RetentionMetrics = {
   retention_1d: 0,
   retention_7d: 0,
   retention_30d: 0,
-}
-
-async function settle<T>(promise: Promise<T>, fallback: T): Promise<T> {
-  try {
-    return await promise
-  } catch (err) {
-    console.warn('Analytics query failed:', err)
-    return fallback
-  }
 }
 
 export function useAnalytics() {
@@ -43,11 +35,11 @@ export function useAnalytics() {
   const load = useCallback(async () => {
     setLoading(true)
     const [active, ret, trend, top, activeUsersList] = await Promise.all([
-      settle(fetchActiveUsersMetrics(), EMPTY_ACTIVE_USERS),
-      settle(fetchRetentionMetrics(), EMPTY_RETENTION),
-      settle(fetchWorkoutTrend(30), []),
-      settle(fetchTopWorkouts(10), []),
-      settle(fetchMostActiveUsers(10), []),
+      settle(fetchActiveUsersMetrics(), EMPTY_ACTIVE_USERS, 'Active users'),
+      settle(fetchRetentionMetrics(), EMPTY_RETENTION, 'Retention'),
+      settle(fetchWorkoutTrend(30), [], 'Workout trend'),
+      settle(fetchTopWorkouts(10), [], 'Top workouts'),
+      settle(fetchMostActiveUsers(10), [], 'Most active users'),
     ])
     setActiveUsers(active)
     setRetention(ret)

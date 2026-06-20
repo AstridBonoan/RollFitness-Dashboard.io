@@ -10,9 +10,10 @@ import {
 } from '@/services/revenue'
 import { fetchDashboardKpis } from '@/services/users'
 import type { DashboardKpis, Expense, RevenueByPlan, SubscriptionPayment, TimeSeriesPoint } from '@/types'
+import { EMPTY_DASHBOARD_KPIS, settle } from '@/utils/settle'
 
 export function useRevenue(page = 0, pageSize = 20) {
-  const [kpis, setKpis] = useState<DashboardKpis | null>(null)
+  const [kpis, setKpis] = useState<DashboardKpis>(EMPTY_DASHBOARD_KPIS)
   const [payments, setPayments] = useState<
     (SubscriptionPayment & { profile?: { username: string | null; email: string | null } })[]
   >([])
@@ -21,30 +22,23 @@ export function useRevenue(page = 0, pageSize = 20) {
   const [byPlan, setByPlan] = useState<RevenueByPlan[]>([])
   const [expenses, setExpenses] = useState<Expense[]>([])
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
 
   const load = useCallback(async () => {
     setLoading(true)
-    setError(null)
-    try {
-      const [kpiData, paymentData, trend, planData, expenseData] = await Promise.all([
-        fetchDashboardKpis(),
-        fetchPayments(page, pageSize),
-        fetchRevenueOverTime(30),
-        fetchRevenueByPlan(30),
-        fetchExpenses(),
-      ])
-      setKpis(kpiData)
-      setPayments(paymentData.payments)
-      setTotal(paymentData.total)
-      setOverTime(trend)
-      setByPlan(planData)
-      setExpenses(expenseData)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load revenue data')
-    } finally {
-      setLoading(false)
-    }
+    const [kpiData, paymentData, trend, planData, expenseData] = await Promise.all([
+      settle(fetchDashboardKpis(), EMPTY_DASHBOARD_KPIS, 'Revenue KPIs'),
+      settle(fetchPayments(page, pageSize), { payments: [], total: 0 }, 'Payments'),
+      settle(fetchRevenueOverTime(30), [], 'Revenue trend'),
+      settle(fetchRevenueByPlan(30), [], 'Revenue by plan'),
+      settle(fetchExpenses(), [], 'Expenses'),
+    ])
+    setKpis(kpiData)
+    setPayments(paymentData.payments)
+    setTotal(paymentData.total)
+    setOverTime(trend)
+    setByPlan(planData)
+    setExpenses(expenseData)
+    setLoading(false)
   }, [page, pageSize])
 
   useEffect(() => {
@@ -69,7 +63,6 @@ export function useRevenue(page = 0, pageSize = 20) {
     byPlan,
     expenses,
     loading,
-    error,
     reload: load,
     addExpense,
     removeExpense,

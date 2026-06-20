@@ -3,7 +3,6 @@ import { DataTable } from '@/components/DataTable'
 import { FilterDropdown } from '@/components/FilterDropdown'
 import { Pagination } from '@/components/Pagination'
 import { SearchBar } from '@/components/SearchBar'
-import { ErrorState } from '@/components/StateViews'
 import { StatusBadge } from '@/components/StatusBadge'
 import { UserDetailPanel } from '@/components/UserDetailPanel'
 import { useUsers } from '@/hooks/useUsers'
@@ -24,7 +23,7 @@ const planOptions = [
 ]
 
 export function UsersPage() {
-  const { users, total, loading, error, query, setQuery, reload } = useUsers()
+  const { users, total, loading, query, setQuery } = useUsers()
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [detail, setDetail] = useState<UserDetail | null>(null)
   const [detailLoading, setDetailLoading] = useState(false)
@@ -40,8 +39,6 @@ export function UsersPage() {
       .catch(() => setDetail(null))
       .finally(() => setDetailLoading(false))
   }, [selectedId])
-
-  if (error) return <ErrorState message={error} onRetry={reload} />
 
   const columns = [
     {

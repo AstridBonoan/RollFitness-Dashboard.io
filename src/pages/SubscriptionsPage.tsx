@@ -4,7 +4,7 @@ import { ChartCard } from '@/components/ChartCard'
 import { DataTable } from '@/components/DataTable'
 import { MetricCard } from '@/components/MetricCard'
 import { Pagination } from '@/components/Pagination'
-import { EmptyState, ErrorState } from '@/components/StateViews'
+import { EmptyState } from '@/components/StateViews'
 import { StatusBadge } from '@/components/StatusBadge'
 import { useSubscriptions } from '@/hooks/useSubscriptions'
 import { membershipPlanLabel } from '@/lib/membership'
@@ -13,9 +13,7 @@ import { formatDate } from '@/utils/formatDate'
 export function SubscriptionsPage() {
   const [page, setPage] = useState(0)
   const pageSize = 20
-  const { subscriptions, total, statusCounts, overTime, loading, error, reload } = useSubscriptions(page, pageSize)
-
-  if (error) return <ErrorState message={error} onRetry={reload} />
+  const { subscriptions, total, statusCounts, overTime, loading } = useSubscriptions(page, pageSize)
 
   const hasBillingData = total > 0 || statusCounts.some((s) => s.count > 0)
 
@@ -42,10 +40,10 @@ export function SubscriptionsPage() {
       <ChartCard
         title="Subscriptions over time"
         description="Active paid subscriptions (30d)"
-        empty={overTime.length === 0}
+        empty={!loading && overTime.length === 0}
         emptyMessage="No subscription history yet."
       >
-        <ResponsiveContainer width="100%" height="100%">
+        <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={256}>
           <LineChart data={overTime}>
             <CartesianGrid strokeDasharray="3 3" className="stroke-carbon-200 dark:stroke-white/10" />
             <XAxis dataKey="day" tick={{ fontSize: 11 }} />

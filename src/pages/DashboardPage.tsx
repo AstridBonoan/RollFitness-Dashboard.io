@@ -1,55 +1,47 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { ChartCard } from '@/components/ChartCard'
 import { DashboardCard } from '@/components/DashboardCard'
 import { MetricCard } from '@/components/MetricCard'
-import { ErrorState, LoadingState } from '@/components/StateViews'
+import { SectionEmpty } from '@/components/SectionEmpty'
 import { StatusBadge } from '@/components/StatusBadge'
 import { fetchActivityFeed, fetchDashboardKpis, fetchSignupsOverTime } from '@/services/users'
 import type { ActivityFeedItem, DashboardKpis, TimeSeriesPoint } from '@/types'
 import { formatCurrency } from '@/utils/formatCurrency'
 import { formatDateTime } from '@/utils/formatDate'
 import { membershipPlanLabel } from '@/lib/membership'
+import { EMPTY_DASHBOARD_KPIS, settle } from '@/utils/settle'
+import { cn } from '@/utils/cn'
 
 export function DashboardPage() {
-  const [kpis, setKpis] = useState<DashboardKpis | null>(null)
+  const [kpis, setKpis] = useState<DashboardKpis>(EMPTY_DASHBOARD_KPIS)
   const [signups, setSignups] = useState<TimeSeriesPoint[]>([])
   const [feed, setFeed] = useState<ActivityFeedItem[]>([])
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
 
-  const load = async () => {
+  const load = useCallback(async () => {
     setLoading(true)
-    setError(null)
-    try {
-      const [kpiData, signupData, feedData] = await Promise.all([
-        fetchDashboardKpis(),
-        fetchSignupsOverTime(30),
-        fetchActivityFeed(15),
-      ])
-      setKpis(kpiData)
-      setSignups(signupData)
-      setFeed(feedData)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load dashboard')
-    } finally {
-      setLoading(false)
-    }
-  }
+    const [kpiData, signupData, feedData] = await Promise.all([
+      settle(fetchDashboardKpis(), EMPTY_DASHBOARD_KPIS, 'Dashboard KPIs'),
+      settle(fetchSignupsOverTime(30), [], 'Signups'),
+      settle(fetchActivityFeed(15), [], 'Activity feed'),
+    ])
+    setKpis(kpiData)
+    setSignups(signupData)
+    setFeed(feedData)
+    setLoading(false)
+  }, [])
 
   useEffect(() => {
     void load()
-  }, [])
-
-  if (loading) return <LoadingState />
-  if (error || !kpis) return <ErrorState message={error ?? 'Unknown error'} onRetry={load} />
+  }, [load])
 
   const monthlyProfit =
     kpis.monthly_revenue_cents - kpis.monthly_expenses_cents - kpis.monthly_stripe_fees_cents
 
   return (
     <div className="space-y-6">
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className={cn('grid gap-4 sm:grid-cols-2 xl:grid-cols-4', loading && 'animate-pulse')}>
         <MetricCard label="Total users" value={kpis.total_users.toLocaleString()} />
         <MetricCard label="New users (30d)" value={kpis.new_users_30d.toLocaleString()} />
         <MetricCard label="Active users (30d)" value={kpis.active_users_30d.toLocaleString()} />
@@ -68,10 +60,10 @@ export function DashboardPage() {
         <ChartCard
           title="User signups (30d)"
           description="Daily new registrations"
-          empty={signups.length === 0}
+          empty={!loading && signups.length === 0}
           emptyMessage="No signups in the last 30 days."
         >
-          <ResponsiveContainer width="100%" height="100%">
+          <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={256}>
             <AreaChart data={signups} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" className="stroke-carbon-200 dark:stroke-white/10" />
               <XAxis dataKey="day" tick={{ fontSize: 11 }} />
@@ -83,10 +75,10 @@ export function DashboardPage() {
         </ChartCard>
 
         <DashboardCard title="Recent activity" description="Signups, subscriptions, and cancellations">
-          {feed.length === 0 ? (
-            <p className="py-8 text-center text-sm text-carbon-500 dark:text-steel-400" role="status">
-              No recent platform activity.
-            </p>
+          {loading ? (
+            <SectionEmpty message="Loading activity…" />
+          ) : feed.length === 0 ? (
+            <SectionEmpty message="No recent platform activity yet." />
           ) : (
             <ul className="divide-y divide-carbon-100 dark:divide-white/10">
               {feed.map((item, i) => (

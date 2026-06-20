@@ -5,7 +5,7 @@ import { DashboardCard } from '@/components/DashboardCard'
 import { DataTable } from '@/components/DataTable'
 import { MetricCard } from '@/components/MetricCard'
 import { Pagination } from '@/components/Pagination'
-import { EmptyState, ErrorState } from '@/components/StateViews'
+import { EmptyState } from '@/components/StateViews'
 import { StatusBadge } from '@/components/StatusBadge'
 import { useRevenue } from '@/hooks/useRevenue'
 import type { ExpenseCategory } from '@/types'
@@ -25,7 +25,7 @@ const expenseCategories: ExpenseCategory[] = [
 export function RevenuePage() {
   const [page, setPage] = useState(0)
   const pageSize = 20
-  const { kpis, payments, total, overTime, byPlan, expenses, loading, error, reload, addExpense, removeExpense } =
+  const { kpis, payments, total, overTime, byPlan, expenses, loading, addExpense, removeExpense } =
     useRevenue(page, pageSize)
 
   const [form, setForm] = useState({
@@ -54,12 +54,9 @@ export function RevenuePage() {
     }
   }
 
-  if (error) return <ErrorState message={error} onRetry={reload} />
-
-  const monthlyProfit = kpis
-    ? kpis.monthly_revenue_cents - kpis.monthly_expenses_cents - kpis.monthly_stripe_fees_cents
-    : 0
-  const noRevenue = !loading && (kpis?.total_revenue_cents ?? 0) === 0 && payments.length === 0
+  const monthlyProfit =
+    kpis.monthly_revenue_cents - kpis.monthly_expenses_cents - kpis.monthly_stripe_fees_cents
+  const noRevenue = !loading && kpis.total_revenue_cents === 0 && payments.length === 0
 
   return (
     <div className="space-y-6">
@@ -71,19 +68,19 @@ export function RevenuePage() {
       ) : null}
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <MetricCard label="Monthly revenue" value={formatCurrency(kpis?.monthly_revenue_cents ?? 0)} />
-        <MetricCard label="Total revenue" value={formatCurrency(kpis?.total_revenue_cents ?? 0)} />
-        <MetricCard label="Monthly expenses" value={formatCurrency(kpis?.monthly_expenses_cents ?? 0)} />
+        <MetricCard label="Monthly revenue" value={formatCurrency(kpis.monthly_revenue_cents)} />
+        <MetricCard label="Total revenue" value={formatCurrency(kpis.total_revenue_cents)} />
+        <MetricCard label="Monthly expenses" value={formatCurrency(kpis.monthly_expenses_cents)} />
         <MetricCard label="Monthly profit" value={formatCurrency(monthlyProfit)} />
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
         <ChartCard
           title="Revenue over time (30d)"
-          empty={overTime.length === 0}
+          empty={!loading && overTime.length === 0}
           emptyMessage="No paid transactions yet."
         >
-          <ResponsiveContainer width="100%" height="100%">
+          <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={256}>
             <LineChart
               data={overTime.map((d) => ({
                 ...d,
@@ -99,8 +96,8 @@ export function RevenuePage() {
           </ResponsiveContainer>
         </ChartCard>
 
-        <ChartCard title="Revenue by plan (30d)" empty={byPlan.length === 0} emptyMessage="No plan breakdown yet.">
-          <ResponsiveContainer width="100%" height="100%">
+        <ChartCard title="Revenue by plan (30d)" empty={!loading && byPlan.length === 0} emptyMessage="No plan breakdown yet.">
+          <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={256}>
             <BarChart
               data={byPlan.map((d) => ({
                 plan: membershipPlanLabel(d.plan),
