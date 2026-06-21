@@ -12,8 +12,22 @@
       rel="stylesheet"
     />
     <title>RollnFitness Admin</title>
-    <script type="module" crossorigin src="/RollFitness-Dashboard.io/assets/index-BbEQi4ni.js"></script>
-    <link rel="stylesheet" crossorigin href="/RollFitness-Dashboard.io/assets/index-B_UeObVl.css">
+    <script>
+      ;(function () {
+        var stored = localStorage.getItem('rollnfitness-admin-theme')
+        var dark = false
+        if (stored === 'dark') dark = true
+        else if (stored === 'system') {
+          dark = window.matchMedia('(prefers-color-scheme: dark)').matches
+        }
+        if (dark) {
+          document.documentElement.classList.add('dark')
+          document.documentElement.style.colorScheme = 'dark'
+        }
+      })()
+    </script>
+    <script type="module" crossorigin src="/RollFitness-Dashboard.io/assets/index-B8FqyixZ.js"></script>
+    <link rel="stylesheet" crossorigin href="/RollFitness-Dashboard.io/assets/index-CiWjgcSP.css">
   </head>
   <body>
     <div id="root"></div>
