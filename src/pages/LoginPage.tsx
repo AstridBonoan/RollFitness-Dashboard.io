@@ -1,8 +1,33 @@
-import { useState, type FormEvent } from 'react'
+import { useState, type FormEvent, type ReactNode } from 'react'
 import { Navigate } from 'react-router-dom'
+import { Logo } from '@/components/Logo'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { useAdminGate } from '@/hooks/useAdminGate'
 import { signInAdmin } from '@/services/auth'
+
+function AuthShell({
+  children,
+  showLogo = true,
+}: {
+  children: ReactNode
+  showLogo?: boolean
+}) {
+  return (
+    <div className="dashboard-shell relative min-h-screen">
+      <div className="absolute right-4 top-4 z-10 sm:right-6 sm:top-6">
+        <ThemeToggle />
+      </div>
+      <div className="mx-auto flex min-h-screen max-w-6xl flex-col items-center justify-center gap-10 px-4 py-16 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:gap-16 lg:py-20">
+        {showLogo ? (
+          <div className="flex w-full max-w-md flex-1 justify-center lg:justify-end">
+            <Logo variant="full" showAdminBadge className="max-w-sm" />
+          </div>
+        ) : null}
+        <div className="w-full max-w-md flex-1">{children}</div>
+      </div>
+    </div>
+  )
+}
 
 export function LoginPage() {
   const { state } = useAdminGate()
@@ -18,8 +43,8 @@ export function LoginPage() {
 
   if (state.status === 'denied' || denied) {
     return (
-      <div className="dashboard-shell flex min-h-screen items-center justify-center p-6">
-        <div className="card-surface w-full max-w-md p-8 text-center" role="alert">
+      <AuthShell>
+        <div className="card-surface p-8 text-center" role="alert">
           <h1 className="font-display text-xl font-bold text-red-700 dark:text-red-400">Access denied</h1>
           <p className="mt-3 text-sm text-carbon-600 dark:text-steel-400">
             Your account is not authorized for the RollnFitness admin dashboard. An existing admin must
@@ -33,7 +58,7 @@ export function LoginPage() {
             Back to login
           </button>
         </div>
-      </div>
+      </AuthShell>
     )
   }
 
@@ -55,16 +80,13 @@ export function LoginPage() {
   }
 
   return (
-    <div className="dashboard-shell relative flex min-h-screen items-center justify-center p-6">
-      <div className="absolute right-4 top-4 sm:right-6 sm:top-6">
-        <ThemeToggle />
-      </div>
-      <div className="card-surface w-full max-w-md p-8">
-        <p className="text-xs font-semibold uppercase tracking-wider text-brand-700 dark:text-brand-400">
-          RollnFitness
-        </p>
-        <h1 className="mt-2 font-display text-2xl font-bold text-carbon-900 dark:text-steel-100">
+    <AuthShell>
+      <div className="card-surface p-8">
+        <p className="inline-flex items-center rounded-full border border-brand-200 bg-brand-50 px-3 py-1 text-xs font-semibold text-brand-700 dark:border-brand-600/40 dark:bg-brand-950/50 dark:text-brand-300">
           Admin sign in
+        </p>
+        <h1 className="mt-4 font-display text-2xl font-bold text-brand-900 dark:text-white">
+          Welcome back
         </h1>
         <p className="mt-2 text-sm text-carbon-600 dark:text-steel-400">
           Use your existing RollnFitness member account. Only users listed in{' '}
@@ -108,12 +130,12 @@ export function LoginPage() {
           <button
             type="submit"
             disabled={loading || state.status === 'loading'}
-            className="touch-target w-full rounded-xl bg-brand-700 py-3 text-sm font-semibold text-white hover:bg-brand-600 disabled:opacity-60"
+            className="touch-target w-full rounded-xl bg-brand-700 py-3 text-sm font-semibold uppercase tracking-wide text-white hover:bg-brand-600 disabled:opacity-60 dark:bg-brand-600 dark:hover:bg-brand-500"
           >
             {loading ? 'Signing in…' : 'Sign in'}
           </button>
         </form>
       </div>
-    </div>
+    </AuthShell>
   )
 }

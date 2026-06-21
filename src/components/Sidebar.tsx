@@ -1,4 +1,5 @@
 import { NavLink } from 'react-router-dom'
+import { Logo, LogoMarkOnly } from '@/components/Logo'
 import { cn } from '@/utils/cn'
 
 const navItems: { to: string; label: string; end?: boolean }[] = [
@@ -21,19 +22,21 @@ export function Sidebar({ collapsed = false, onNavigate }: SidebarProps) {
     <aside
       className={cn(
         'flex h-full flex-col border-r border-carbon-200 bg-white dark:border-white/10 dark:bg-[#111111]',
-        collapsed ? 'w-16' : 'w-64',
+        collapsed ? 'w-[4.5rem]' : 'w-64',
       )}
       aria-label="Admin navigation"
     >
-      <div className={cn('border-b border-carbon-200 px-4 py-5 dark:border-white/10', collapsed && 'px-2')}>
-        <p className={cn('font-display text-lg font-bold text-brand-700 dark:text-brand-400', collapsed && 'sr-only')}>
-          RollnFitness
-        </p>
-        {!collapsed ? (
-          <p className="text-xs font-medium uppercase tracking-wider text-carbon-500 dark:text-steel-400">
-            Admin
-          </p>
-        ) : null}
+      <div
+        className={cn(
+          'border-b border-carbon-200 px-4 py-4 dark:border-white/10',
+          collapsed && 'flex justify-center px-2 py-4',
+        )}
+      >
+        {collapsed ? (
+          <LogoMarkOnly className="h-9 w-auto max-w-[2.75rem]" />
+        ) : (
+          <Logo variant="compact" showAdminBadge />
+        )}
       </div>
       <nav className="flex-1 space-y-1 p-3">
         {navItems.map((item) => (
