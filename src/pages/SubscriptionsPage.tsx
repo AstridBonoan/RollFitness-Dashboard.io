@@ -54,7 +54,7 @@ export function SubscriptionsPage() {
         </ResponsiveContainer>
       </ChartCard>
 
-      <div className="card-surface">
+      <div className="space-y-4">
         <DataTable
           columns={[
             {
@@ -100,9 +100,13 @@ export function SubscriptionsPage() {
           caption="Subscriptions"
           emptyMessage="No paid subscriptions yet."
         />
-        <div className="border-t border-carbon-200 px-5 py-4 dark:border-white/10 sm:px-6">
-          <Pagination page={page} pageSize={pageSize} total={total} onPageChange={setPage} />
-        </div>
+        <Pagination
+          className="border-t border-carbon-200 pt-4 dark:border-white/10"
+          page={page}
+          pageSize={pageSize}
+          total={total}
+          onPageChange={setPage}
+        />
       </div>
     </div>
   )

@@ -42,7 +42,7 @@ export function DataTable<T>({
   }
 
   return (
-    <div className="overflow-x-auto -mx-5 sm:-mx-6">
+    <div className="overflow-x-auto">
       <table className="min-w-full text-left text-sm">
         {caption ? <caption className="sr-only">{caption}</caption> : null}
         <thead className="border-b border-carbon-200 bg-carbon-50/80 text-xs uppercase tracking-wide text-carbon-600 dark:border-white/10 dark:bg-white/5 dark:text-steel-400">

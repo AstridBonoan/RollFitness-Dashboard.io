@@ -114,7 +114,7 @@ export function UsersPage() {
         />
       </div>
 
-      <div className="card-surface">
+      <div className="space-y-4">
         <DataTable
           columns={columns}
           data={users}
@@ -123,14 +123,13 @@ export function UsersPage() {
           caption="Platform users"
           emptyMessage="No users match your filters."
         />
-        <div className="border-t border-carbon-200 px-5 py-4 dark:border-white/10 sm:px-6">
-          <Pagination
-            page={query.page ?? 0}
-            pageSize={query.pageSize ?? 20}
-            total={total}
-            onPageChange={(page) => setQuery((q) => ({ ...q, page }))}
-          />
-        </div>
+        <Pagination
+          className="border-t border-carbon-200 pt-4 dark:border-white/10"
+          page={query.page ?? 0}
+          pageSize={query.pageSize ?? 20}
+          total={total}
+          onPageChange={(page) => setQuery((q) => ({ ...q, page }))}
+        />
       </div>
 
       <UserDetailPanel
