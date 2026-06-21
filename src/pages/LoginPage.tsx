@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { Navigate } from 'react-router-dom'
+import { ThemeToggle } from '@/components/ThemeToggle'
 import { useAdminGate } from '@/hooks/useAdminGate'
 import { signInAdmin } from '@/services/auth'
 
@@ -54,7 +55,10 @@ export function LoginPage() {
   }
 
   return (
-    <div className="dashboard-shell flex min-h-screen items-center justify-center p-6">
+    <div className="dashboard-shell relative flex min-h-screen items-center justify-center p-6">
+      <div className="absolute right-4 top-4 sm:right-6 sm:top-6">
+        <ThemeToggle />
+      </div>
       <div className="card-surface w-full max-w-md p-8">
         <p className="text-xs font-semibold uppercase tracking-wider text-brand-700 dark:text-brand-400">
           RollnFitness

@@ -1,7 +1,8 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { DashboardCard } from '@/components/DashboardCard'
+import { ThemeToggle } from '@/components/ThemeToggle'
 import { getSupabase } from '@/services/supabase'
-import { useTheme, type ThemePreference } from '@/hooks/useTheme'
+import { useTheme } from '@/hooks/useTheme'
 import type { Profile } from '@/types'
 
 interface SettingsPageProps {
@@ -52,12 +53,6 @@ export function SettingsPage({ email }: SettingsPageProps) {
     setMessage('Password updated successfully.')
   }
 
-  const themeOptions: { value: ThemePreference; label: string }[] = [
-    { value: 'light', label: 'Light' },
-    { value: 'dark', label: 'Dark' },
-    { value: 'system', label: 'System' },
-  ]
-
   return (
     <div className="mx-auto max-w-2xl space-y-6">
       <DashboardCard title="Account">
@@ -74,26 +69,24 @@ export function SettingsPage({ email }: SettingsPageProps) {
       </DashboardCard>
 
       <DashboardCard title="Appearance">
-        <fieldset>
-          <legend className="sr-only">Theme preference</legend>
-          <div className="flex flex-wrap gap-2">
-            {themeOptions.map((opt) => (
-              <button
-                key={opt.value}
-                type="button"
-                onClick={() => setPreference(opt.value)}
-                className={`touch-target rounded-xl border px-4 py-2.5 text-sm font-medium ${
-                  preference === opt.value
-                    ? 'border-brand-600 bg-brand-50 text-brand-800 dark:bg-brand-950/50 dark:text-brand-300'
-                    : 'border-carbon-300 dark:border-white/15'
-                }`}
-                aria-pressed={preference === opt.value}
-              >
-                {opt.label}
-              </button>
-            ))}
-          </div>
-        </fieldset>
+        <p className="mb-4 text-sm text-carbon-600 dark:text-steel-400">
+          Light mode uses a soft white base with navy and lime accents. Dark mode uses charcoal with royal blue and gold highlights.
+        </p>
+        <div className="flex flex-wrap items-center gap-4">
+          <ThemeToggle showLabels />
+          <button
+            type="button"
+            onClick={() => setPreference('system')}
+            className={`touch-target rounded-xl border px-4 py-2.5 text-sm font-medium ${
+              preference === 'system'
+                ? 'border-brand-600 bg-brand-50 text-brand-800 dark:bg-brand-950/50 dark:text-brand-300'
+                : 'border-carbon-300 dark:border-white/15'
+            }`}
+            aria-pressed={preference === 'system'}
+          >
+            Use system
+          </button>
+        </div>
       </DashboardCard>
 
       <DashboardCard title="Change password">

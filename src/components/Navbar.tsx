@@ -1,4 +1,4 @@
-import { useTheme } from '@/hooks/useTheme'
+import { ThemeToggle } from '@/components/ThemeToggle'
 
 interface NavbarProps {
   title: string
@@ -8,14 +8,6 @@ interface NavbarProps {
 }
 
 export function Navbar({ title, onMenuClick, onSignOut, email }: NavbarProps) {
-  const { preference, setPreference } = useTheme()
-
-  const cycleTheme = () => {
-    const order = ['light', 'dark', 'system'] as const
-    const idx = order.indexOf(preference)
-    setPreference(order[(idx + 1) % order.length])
-  }
-
   return (
     <header className="sticky top-0 z-30 flex min-h-[56px] items-center justify-between gap-3 border-b border-carbon-200 bg-white/90 px-4 py-3 backdrop-blur-xl dark:border-white/10 dark:bg-[#0a0a0a]/90 sm:px-6">
       <div className="flex items-center gap-3">
@@ -37,14 +29,7 @@ export function Navbar({ title, onMenuClick, onSignOut, email }: NavbarProps) {
         {email ? (
           <span className="hidden text-sm text-carbon-600 dark:text-steel-400 sm:inline">{email}</span>
         ) : null}
-        <button
-          type="button"
-          onClick={cycleTheme}
-          className="touch-target rounded-lg border border-carbon-300 px-3 py-2 text-xs font-medium capitalize text-carbon-700 dark:border-white/15 dark:text-steel-200"
-          aria-label={`Theme: ${preference}. Click to change.`}
-        >
-          {preference}
-        </button>
+        <ThemeToggle />
         {onSignOut ? (
           <button
             type="button"
